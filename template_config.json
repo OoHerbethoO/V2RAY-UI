@@ -31,8 +31,8 @@
         "tlsSettings": {
           "certificates": [
             {
-              "certificateFile": "",
-              "keyFile": ""
+              "certificateFile": "/root/.acme.sh/br2.virtualnet.ml_ecc/br2.virtualnet.ml.cer",
+              "keyFile": "/root/.acme.sh/br2.virtualnet.ml_ecc/br2.virtualnet.ml.key"
             }
           ],
           "alpn": ["http/1.1"]
@@ -43,12 +43,12 @@
         "wsSettings": {
           "path": "/ws/",
           "headers": {
-            "Host": "your.domain.tl"
+            "Host": "br2.virtualnet.ml"
           }
         },
         "quicSettings": {}
       },
-      "domain": "your.domain.tl",
+      "domain": "br2.virtualnet.ml",
       "tag": "client"
     }
   ],
@@ -83,7 +83,7 @@
         "type": "field"
       },
       {
-        "ip": ["geoip:private"],
+        "ip": ["geoip:private", "geoip:cloudflare"],
         "outboundTag": "blocked",
         "type": "field"
       },

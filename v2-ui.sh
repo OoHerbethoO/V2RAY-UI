@@ -90,7 +90,7 @@ before_show_menu() {
 }
 
 install() {
-    bash <(curl -Ls https://raw.githubusercontent.com/OoHerbethoO/V2RAY-UI/master/install.sh)
+    bash <(curl -Ls https://raw.githubusercontent.com/OoHerbethoO/V2RAY-UI/main/install.sh)
     if [[ $? == 0 ]]; then
         if [[ $# == 0 ]]; then
             start
@@ -109,7 +109,7 @@ update() {
         fi
         return 0
     fi
-    bash <(curl -Ls https://raw.githubusercontent.com/OoHerbethoO/V2RAY-UI/master/install.sh)
+    bash <(curl -Ls https://raw.githubusercontent.com/OoHerbethoO/V2RAY-UI/main/install.sh)
     if [[ $? == 0 ]]; then
         echo -e "${green}The update is complete, the panel has been automatically restarted${plain}"
         exit

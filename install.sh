@@ -165,6 +165,28 @@ installDependent(){
     pip3 install -r /usr/local/v2-ui/requirements.txt
 }
 
+updateGeoIP(){
+    echo -e "Updating Geoip database"
+    mv /usr/local/v2-ui/bin/geoip.dat /usr/local/v2-ui/bin/geoip.datD
+    wget -q -N --no-check-certificate https://raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip.dat
+    sleep 2
+    if [[ $? -ne 0 ]]; then
+        if [[ -e /usr/local/v2-ui/bin/geoip.datD ]]; then
+            mv /usr/local/v2-ui/bin/geoip.datD /usr/local/v2-ui/bin/geoip.dat
+        fi
+        echo -e "${red}Failed to download Geoip database.${plain}"
+    else
+        if [[ -e /usr/local/v2-ui/bin/geoip.datD ]]; then
+            rm -rf /usr/local/v2-ui/bin/geoip.datD
+        fi
+    fi
+
+    chmod +x /usr/local/v2-ui/bin/geoip.dat
+    chmod +x /usr/local/v2-ui/bin/geosite.dat
+    echo -e "${green}Geoip database updated.${plain}"
+    sleep 2
+}
+
 timeSync() {
     if [[ ${INSTALL_WAY} == 0 ]];then
         echo -e "${Info} Time Synchronizing.. ${Font}"
@@ -204,17 +226,17 @@ install_v2_ui() {
     mkdir -p /etc/v2-ui/
     
     cd /usr/local/
-    if [[ -e /usr/local/v2-ui/ ]]; then
-        rm /usr/local/v2-ui/ -rf
-    fi
-
     if  [ $# == 0 ] ;then
         last_version=$(curl -Ls "https://api.github.com/repos/OoHerbethoO/V2RAY-UI/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
         if [[ ! -n "$last_version" ]]; then
             echo -e "${red}Failed to detect the v2-ui version, it may be that the Github API limit is exceeded, please try again later, or manually specify the v2-ui version to install${plain}"
             exit 1
+        else
+            if [[ -e /usr/local/v2-ui/ ]]; then
+                rm /usr/local/v2-ui/ -rf
+            fi
         fi
-        echo -e "v2-ui latest version detected：${last_version}，start installation"
+        echo -e "v2-ui latest version detected： ${last_version}，start installation"
         wget -N --no-check-certificate -O /usr/local/v2-ui-linux-${arch}.tar.gz https://github.com/OoHerbethoO/V2RAY-UI/releases/download/${last_version}/v2-ui-linux-${arch}.tar.gz
         if [[ $? -ne 0 ]]; then
             echo -e "${red}Failed to download v2-ui, please make sure your server can download Github files${plain}"
@@ -238,13 +260,14 @@ install_v2_ui() {
     closeSELinux
     timeSync
     profileInit
+    updateGeoIP
 
     chmod +x bin/xray-v2-ui-linux-${arch}
     cp -f v2-ui.service /etc/systemd/system/
     systemctl daemon-reload
     systemctl enable v2-ui
     systemctl start v2-ui
-    echo -e "${green}v2-ui v${last_version}${plain} installation is complete, the panel has been launched,"
+    echo -e "${green}v2-ui v${last_version}${plain} installation is complete, the panel has been launched."
     echo -e ""
     echo -e "If it is a fresh installation, the default web port is ${green}65432${plain}, and the username and password default to ${green}admin${plain}"
     echo -e "Please make sure that this port is not occupied by other programs, ${yellow}and make sure that port 65432 is released${plain}"
@@ -252,7 +275,7 @@ install_v2_ui() {
     echo -e ""
     echo -e "If it's an update panel, access the panel as you did before"
     echo -e ""
-    curl -o /usr/bin/v2-ui -Ls https://raw.githubusercontent.com/OoHerbethoO/V2RAY-UI/master/v2-ui.sh
+    curl -o /usr/bin/v2-ui -Ls https://raw.githubusercontent.com/OoHerbethoO/V2RAY-UI/main/v2-ui.sh
     chmod +x /usr/bin/v2-ui
     echo -e "How to use the v2-ui management script: "
     echo -e "----------------------------------------------"

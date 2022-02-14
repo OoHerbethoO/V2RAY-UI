@@ -45,7 +45,7 @@ If necessary, please make a backup in advance to avoid unnecessary consequences.
 ## One command installation & upgrade
 
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/OoHerbethoO/V2RAY-UI/master/v2-ui.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/OoHerbethoO/V2RAY-UI/main/v2-ui.sh)
 ```
 
 # Other operations
