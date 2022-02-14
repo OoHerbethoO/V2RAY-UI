@@ -19,7 +19,7 @@ jobs:
       - name: Copy file to build folder
         run: cp -rv . ../v2-ui
       - name: Removing Github files
-        run: rm -rf ./v2-ui/.git ./v2-ui/.github
+        run: rm -rf ../v2-ui/.git ../v2-ui/.github
       - name: Build project
         run: |
           tar -czvf ./v2-ui-linux-arm64.tar.gz ../v2-ui
