@@ -5,7 +5,6 @@ __pycache__
 /v2-ui-linux.tar.gz
 /buid
 /dist
-/.github
 /bin/v2ctl.exe
 /bin/v2ray.exe
 /bin/v2ray-win.exe

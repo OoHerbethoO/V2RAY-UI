@@ -1,0 +1,60 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "*" # Push events to matching v*, i.e. v1.0, v20.15.10
+
+jobs:
+  build_release:
+    name: build_release
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Create build folder # This would actually build your project, using zip for an example artifact
+        run: mkdir -p ../v2-ui
+      - name: Copy file to build folder # This would actually build your project, using zip for an example artifact
+        run: cp -rv . ../v2-ui
+      - name: Build project # This would actually build your project, using zip for an example artifact
+        run: |
+          tar -czvf ./v2-ui-linux-arm64.tar.gz ../v2-ui
+      - name: Copy file builded to amd64 # This would actually build your project, using zip for an example artifact
+        run: cp ./v2-ui-linux-arm64.tar.gz ./v2-ui-linux-amd64.tar.gz
+      - name: Delete tag and release
+        uses: dev-drprasad/delete-tag-and-release@v0.2.0
+        with:
+          delete_release: true # default: false
+          tag_name: ${{ github.ref }} # tag name to delete
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: false
+          prerelease: false
+          release_name: Release ${{ github.ref }}
+          tag_name: ${{ github.ref }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: upload linux arm64
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./v2-ui-linux-arm64.tar.gz
+          asset_name: v2-ui-linux-arm64.tar.gz
+          asset_content_type: application/gzip
+      - name: upload linux amd64
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./v2-ui-linux-amd64.tar.gz
+          asset_name: v2-ui-linux-amd64.tar.gz
+          asset_content_type: application/gzip
