@@ -31,8 +31,8 @@
         "tlsSettings": {
           "certificates": [
             {
-              "certificateFile": "/root/.acme.sh/br2.virtualnet.ml_ecc/br2.virtualnet.ml.cer",
-              "keyFile": "/root/.acme.sh/br2.virtualnet.ml_ecc/br2.virtualnet.ml.key"
+              "certificateFile": "/root/.acme.sh/your.domain.tl_ecc/your.domain.tl.cer",
+              "keyFile": "/root/.acme.sh/your.domain.tl_ecc/your.domain.tl.key"
             }
           ],
           "alpn": ["http/1.1"]
@@ -43,12 +43,12 @@
         "wsSettings": {
           "path": "/ws/",
           "headers": {
-            "Host": "br2.virtualnet.ml"
+            "Host": "your.domain.tl"
           }
         },
         "quicSettings": {}
       },
-      "domain": "br2.virtualnet.ml",
+      "domain": "your.domain.tl",
       "tag": "client"
     }
   ],
