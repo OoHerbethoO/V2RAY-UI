@@ -98,6 +98,8 @@ def install_v2ray_by_version(version: str):
     elif arch == "arm64":
         arch = "arm64-v8a"
     url = f'https://github.com/XTLS/Xray-core/releases/download/{version}/Xray-{sys_name}-{arch}.zip'
+    geoip_url = f'https://raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip.dat'
+    geoip_tmp = config.get_dir('geoip_temp.dat')
     filename = config.get_dir('v2ray_temp.zip')
     zip_dest_dir = config.get_dir('temp_v2ray')
     try:
@@ -129,6 +131,17 @@ def install_v2ray_by_version(version: str):
             # +x
             os.chmod(dest_file_path, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
 
+        with requests.get(geoip_url, stream=True) as response:
+            if response.status_code == 200:
+                with open(geoip_tmp, 'wb') as f:
+                    for data in response.iter_content(8192):
+                        f.write(data)
+                        
+                geoip_path = os.path.join(bin_dir, 'geoip.dat')
+                file_util.del_file(geoip_path)
+                file_util.mv_file(geoip_tmp, geoip_path)
+                os.chmod(geoip_path, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
+                
         v2_util.__v2ray_version = ''
         v2_util.restart()
 
