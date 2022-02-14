@@ -9,7 +9,7 @@ from base.models import User
 from init import db
 from util import config, server_info, v2_util
 from util.v2_jobs import v2_config_change
-from v2ray.models import Inbound
+from v2ray.models import Inbound, Client
 
 v2ray_bp = Blueprint('v2ray', __name__, url_prefix='/v2ray')
 
@@ -80,6 +80,10 @@ def add_inbound():
     remark = request.form['remark']
     inbound = Inbound(port, listen, protocol, settings, stream_settings, sniffing, remark)
     db.session.add(inbound)
+    db.session.commit()
+    
+    client = Client(settings, remark)
+    db.session.add(client)
     db.session.commit()
     return jsonify(
         Msg(True,

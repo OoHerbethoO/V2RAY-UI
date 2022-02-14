@@ -4,12 +4,11 @@ import threading
 from datetime import datetime, timedelta
 from threading import Timer
 
-import requests
-
 from init import db
 from util import config, v2_util
 from util.schedule_util import schedule_job
 from v2ray.models import Inbound
+from v2ray.models import Client
 
 # __lock = threading.Lock()
 __v2_config_changed = True
@@ -46,7 +45,9 @@ def traffic_job():
             upload = int(traffic.get('uplink', 0))
             download = int(traffic.get('downlink', 0))
             uid = traffic['uid']
+            
             Inbound.query.filter_by(uid=uid).update({'up': Inbound.up + upload, 'down': Inbound.down + download})
+            Client.query.filter_by(uid=uid).update({'up': Client.up + upload, 'down': Client.down + download})
         db.session.commit()
     except Exception as e:
         logging.warning(f'traffic job error: {e}')
