@@ -166,6 +166,7 @@ installDependent(){
 }
 
 updateGeoIP(){
+    cd /usr/local/v2-ui/bin
     echo -e "Updating Geoip database"
     if [[ -e /usr/local/v2-ui/bin/geoip.dat ]]; then
         mv /usr/local/v2-ui/bin/geoip.dat /usr/local/v2-ui/bin/geoip.datD
@@ -187,6 +188,7 @@ updateGeoIP(){
     chmod +x /usr/local/v2-ui/bin/geoip.dat
     chmod +x /usr/local/v2-ui/bin/geosite.dat
     echo -e "${green}Geoip database updated.${plain}"
+    cd /usr/local/v2-ui/
     sleep 2
 }
 
