@@ -1,0 +1,11 @@
+[Unit]
+Description=v2-ui Service
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /usr/local/v2-ui/v2-ui.py "$@"
+
+[Install]
+WantedBy=multi-user.target
