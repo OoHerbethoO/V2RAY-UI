@@ -167,7 +167,10 @@ installDependent(){
 
 updateGeoIP(){
     echo -e "Updating Geoip database"
-    mv /usr/local/v2-ui/bin/geoip.dat /usr/local/v2-ui/bin/geoip.datD
+    if [[ -e /usr/local/v2-ui/bin/geoip.dat ]]; then
+        mv /usr/local/v2-ui/bin/geoip.dat /usr/local/v2-ui/bin/geoip.datD
+    fi
+
     wget -q -N --no-check-certificate https://raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip.dat
     sleep 2
     if [[ $? -ne 0 ]]; then
