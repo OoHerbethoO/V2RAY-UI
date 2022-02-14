@@ -92,8 +92,10 @@ def add_inbound():
 @v2_config_change
 def update_inbound(in_id):
     update = {}
-    port = request.form.get('port')
+    port = request.form.get('id')
+    uid = json.loads(request.form.get('settings'))['clients'][0]['id']
     add_if_not_none(update, 'port', port)
+    add_if_not_none(update, 'uid', uid)
     if port:
         if Inbound.query.filter(and_(Inbound.id != in_id, Inbound.port == port)).count() > 0:
             return jsonify(Msg(False, gettext('port exists')))
