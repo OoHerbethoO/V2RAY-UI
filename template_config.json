@@ -3,11 +3,7 @@
     "services": ["HandlerService", "LoggerService", "StatsService"],
     "tag": "api"
   },
-  "log": {
-    "access": "/var/log/v2ray/access.log",
-    "error": "/var/log/v2ray/error.log",
-    "loglevel": "warning"
-  },
+  "dns": {},
   "inbounds": [
     {
       "listen": "127.0.0.1",
@@ -19,6 +15,7 @@
       "tag": "api"
     },
     {
+      "domain": "br3.virtualnet.ml",
       "port": 443,
       "protocol": "vless",
       "settings": {
@@ -26,32 +23,34 @@
         "decryption": "none"
       },
       "streamSettings": {
+        "httpSettings": {},
+        "kcpSettings": {},
         "network": "ws",
+        "quicSettings": {},
         "security": "tls",
+        "tcpSettings": {},
         "tlsSettings": {
+          "alpn": ["http/1.1"],
           "certificates": [
             {
-              "certificateFile": "/root/.acme.sh/your.domain.tl_ecc/your.domain.tl.cer",
-              "keyFile": "/root/.acme.sh/your.domain.tl_ecc/your.domain.tl.key"
+              "certificateFile": "/etc/letsencrypt/live/br3.virtualnet.ml/fullchain.pem",
+              "keyFile": "/etc/letsencrypt/live/br3.virtualnet.ml/privkey.pem"
             }
-          ],
-          "alpn": ["http/1.1"]
+          ]
         },
-        "tcpSettings": {},
-        "kcpSettings": {},
-        "httpSettings": {},
         "wsSettings": {
-          "path": "/ws/",
-          "headers": {
-            "Host": "your.domain.tl"
-          }
-        },
-        "quicSettings": {}
+          "headers": {},
+          "path": "/ws/"
+        }
       },
-      "domain": "your.domain.tl",
       "tag": "client"
     }
   ],
+  "log": {
+    "access": "/var/log/v2ray/access.log",
+    "error": "/var/log/v2ray/error.log",
+    "loglevel": "warning"
+  },
   "outbounds": [
     {
       "protocol": "freedom",
@@ -66,8 +65,8 @@
   "policy": {
     "levels": {
       "0": {
-        "statsUserUplink": true,
-        "statsUserDownlink": true
+        "statsUserDownlink": true,
+        "statsUserUplink": true
       }
     },
     "system": {
@@ -75,6 +74,7 @@
       "statsInboundUplink": true
     }
   },
+  "reverse": {},
   "routing": {
     "rules": [
       {
@@ -83,7 +83,12 @@
         "type": "field"
       },
       {
-        "ip": ["geoip:private", "geoip:cloudflare"],
+        "ip": ["geoip:cloudflare"],
+        "outboundTag": "direct",
+        "type": "field"
+      },
+      {
+        "ip": ["geoip:private"],
         "outboundTag": "blocked",
         "type": "field"
       },
@@ -94,5 +99,6 @@
       }
     ]
   },
-  "stats": {}
+  "stats": {},
+  "transport": {}
 }
