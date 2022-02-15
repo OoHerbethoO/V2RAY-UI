@@ -30,8 +30,7 @@ def accounts():
     inbs = '[' + ','.join([json.dumps(inb.to_json(), ensure_ascii=False) for inb in inbs]) + ']'
     user = User.query.first()
     has_changed = user.username != 'admin' or user.password != 'admin'
-    return render_template('v2ray/accounts.html', **common_context,
-                           inbounds=inbs, has_changed=has_changed)
+    return render_template('v2ray/accounts.html', **common_context, inbounds=inbs, has_changed=has_changed)
 
 
 @v2ray_bp.route('/clients/', methods=['GET'])
@@ -79,11 +78,9 @@ def add_inbound():
     sniffing = request.form['sniffing']
     remark = request.form['remark']
     inbound = Inbound(port, listen, protocol, settings, stream_settings, sniffing, remark)
-    db.session.add(inbound)
-    db.session.commit()
-    
     client = Client(settings, remark)
     db.session.add(client)
+    db.session.add(inbound)
     db.session.commit()
     return jsonify(
         Msg(True,
@@ -123,6 +120,8 @@ def update_inbound(in_id):
 @v2ray_bp.route('inbound/del/<int:in_id>', methods=['POST'])
 @v2_config_change
 def del_inbound(in_id):
+    inbound = Inbound.query.filter_by(id=in_id).first()
+    Client.query.filter_by(uid=inbound.uid).delete()
     Inbound.query.filter_by(id=in_id).delete()
     db.session.commit()
     return jsonify(
