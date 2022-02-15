@@ -15,7 +15,7 @@
       "tag": "api"
     },
     {
-      "domain": "br3.virtualnet.ml",
+      "domain": "your.domain.tl",
       "port": 443,
       "protocol": "vless",
       "settings": {
@@ -33,8 +33,8 @@
           "alpn": ["http/1.1"],
           "certificates": [
             {
-              "certificateFile": "/etc/letsencrypt/live/br3.virtualnet.ml/fullchain.pem",
-              "keyFile": "/etc/letsencrypt/live/br3.virtualnet.ml/privkey.pem"
+              "certificateFile": "/etc/letsencrypt/live/your.domain.tl/fullchain.pem",
+              "keyFile": "/etc/letsencrypt/live/your.domain.tl/privkey.pem"
             }
           ]
         },
