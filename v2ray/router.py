@@ -9,7 +9,7 @@ from base.models import User
 from init import db
 from util import config, server_info, v2_util
 from util.v2_jobs import v2_config_change
-from v2ray.models import Inbound
+from v2ray.models import Inbound, Client
 
 v2ray_bp = Blueprint('v2ray', __name__, url_prefix='/v2ray')
 
@@ -30,8 +30,7 @@ def accounts():
     inbs = '[' + ','.join([json.dumps(inb.to_json(), ensure_ascii=False) for inb in inbs]) + ']'
     user = User.query.first()
     has_changed = user.username != 'admin' or user.password != 'admin'
-    return render_template('v2ray/accounts.html', **common_context,
-                           inbounds=inbs, has_changed=has_changed)
+    return render_template('v2ray/accounts.html', **common_context, inbounds=inbs, has_changed=has_changed)
 
 
 @v2ray_bp.route('/clients/', methods=['GET'])
@@ -79,6 +78,8 @@ def add_inbound():
     sniffing = request.form['sniffing']
     remark = request.form['remark']
     inbound = Inbound(port, listen, protocol, settings, stream_settings, sniffing, remark)
+    client = Client(settings, remark)
+    db.session.add(client)
     db.session.add(inbound)
     db.session.commit()
     return jsonify(
@@ -119,6 +120,8 @@ def update_inbound(in_id):
 @v2ray_bp.route('inbound/del/<int:in_id>', methods=['POST'])
 @v2_config_change
 def del_inbound(in_id):
+    inbound = Inbound.query.filter_by(id=in_id).first()
+    Client.query.filter_by(uid=inbound.uid).delete()
     Inbound.query.filter_by(id=in_id).delete()
     db.session.commit()
     return jsonify(

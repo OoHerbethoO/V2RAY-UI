@@ -79,3 +79,57 @@ class Inbound(db.Model):
 
     def to_v2_str(self):
         return json.dumps(self.to_v2_json(), indent=2, separators=(',', ': '), sort_keys=True, ensure_ascii=False)
+
+
+class Client(db.Model):
+    __tablename__ = 'client'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    uid = Column(String(255), default='', unique=True, nullable=False)
+    email = Column(String(255), default='', unique=True, nullable=False)
+    remark = Column(String(255), default='', nullable=False)
+    up = Column(BIGINT, default=0, nullable=False)
+    down = Column(BIGINT, default=0, nullable=False)
+    enable = Column(Boolean, default=True, nullable=False)
+
+    def __init__(self, settings=None, remark=None):
+        self.uid = json.loads(settings)['clients'][0]['id']
+        self.remark = remark
+        self.email = f'{self.remark}@{self.uid}'
+        self.up = 0
+        self.down = 0
+        self.enable = True
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'uid': self.uid,
+            'email': f'{self.remark}@{self.uid}',
+            'remark': self.remark,
+            'up': self.up,
+            'down': self.down,
+            'enable': self.enable,
+        }
+
+    def to_v2_json(self):
+        return {
+            'uid': self.uid,
+            'email': self.uid,
+        }
+
+    def clients_to_v2_json(self):
+        _id = self['id']
+        if 'alterId' in self:
+            alterId = self['alterId']
+            return {
+                'id': _id,
+                'alterId': alterId,
+                'email': f'{_id}',
+            }
+        else:
+            return {
+                'id': _id,
+                'email': f'{_id}',
+            }
+
+    def to_v2_str(self):
+        return json.dumps(self.to_v2_json(), indent=2, separators=(',', ': '), sort_keys=True, ensure_ascii=False)
